@@ -1,6 +1,7 @@
 package com.apishoppage.api.config.userconfig;
 
 import com.apishoppage.api.entity.User;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,11 +15,7 @@ public class UserConfig implements UserDetails {
     private final User user;
 
 
-    public UserConfig(User user) {
-        this.user = user;
-    }
-
-    /*All this methods define the user autority*/
+    /*All these methods define the user authority*/
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays

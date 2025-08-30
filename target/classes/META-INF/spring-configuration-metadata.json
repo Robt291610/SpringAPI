@@ -1,0 +1,25 @@
+{
+  "groups": [
+    {
+      "name": "jwt",
+      "type": "com.apishoppage.api.config.RSAKeyRecord",
+      "sourceType": "com.apishoppage.api.config.RSAKeyRecord"
+    }
+  ],
+  "properties": [
+    {
+      "name": "jwt.private-key",
+      "type": "java.security.interfaces.RSAPrivateKey",
+      "sourceType": "com.apishoppage.api.config.RSAKeyRecord"
+    },
+    {
+      "name": "jwt.public-key",
+      "type": "java.security.interfaces.RSAPublicKey",
+      "sourceType": "com.apishoppage.api.config.RSAKeyRecord"
+    }
+  ],
+  "hints": [],
+  "ignored": {
+    "properties": []
+  }
+}

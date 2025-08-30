@@ -4,6 +4,7 @@ import com.apishoppage.api.entity.Person;
 
 import com.apishoppage.api.service.PersonService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,20 +15,16 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api/person")
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class PersonController {
     private final PersonService service;
-
-    @Autowired
-    public PersonController(PersonService service){
-        this.service = service;
-    }
 
     @PostMapping
     public Person Post(@Valid @RequestBody Person person) {
         return service.save(person);
     }
 
-    @GetMapping()
+    @GetMapping
     public List<Person> GetAll(){
         return service.findAll();
     }

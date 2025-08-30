@@ -3,6 +3,7 @@ package com.apishoppage.api.service;
 import com.apishoppage.api.entity.Person;
 import com.apishoppage.api.repository.PersonRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +14,9 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class PersonService {
     private final PersonRepository personRepository;
-
-    @Autowired
-    public PersonService(PersonRepository personRepository) {
-        this.personRepository = personRepository;
-    }
 
     public Person save(Person person) {
         return personRepository.save(person);
