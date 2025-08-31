@@ -1,5 +1,7 @@
 package com.apishoppage.api.config;
 
+import com.apishoppage.api.config.jwtconfig.JwtAccessTokenFilter;
+import com.apishoppage.api.config.jwtconfig.JwtTokenUtils;
 import com.apishoppage.api.config.userconfig.UserManagerConfig;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -27,6 +29,7 @@ import org.springframework.security.oauth2.server.resource.web.access.BearerToke
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -39,6 +42,7 @@ public class SecurityConfig {
 
     private final UserManagerConfig userManagerConfig;
     private final RSAKeyRecord rsaKeyRecord;
+    private final JwtTokenUtils jwtTokenUtils;
 
 /*this method has the signing path for the post method located in auth controller*/
     @Order(1)
@@ -65,6 +69,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
+                .addFilterBefore(new JwtAccessTokenFilter(rsaKeyRecord, jwtTokenUtils), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex -> {
                     log.error("[SecurityConfig:apiSecurityFilterChain] Exception due to :{}",ex);
@@ -92,6 +97,8 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(withDefaults()).disable())
                 .build();
     }
+
+
 
 
     /*Encrypt the password
