@@ -1,8 +1,10 @@
 package com.apishoppage.api.config;
 
 import com.apishoppage.api.config.jwtconfig.JwtAccessTokenFilter;
+import com.apishoppage.api.config.jwtconfig.JwtRefreshTokenFilter;
 import com.apishoppage.api.config.jwtconfig.JwtTokenUtils;
 import com.apishoppage.api.config.userconfig.UserManagerConfig;
+import com.apishoppage.api.repository.RefreshTokenRepo;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -43,6 +45,7 @@ public class SecurityConfig {
     private final UserManagerConfig userManagerConfig;
     private final RSAKeyRecord rsaKeyRecord;
     private final JwtTokenUtils jwtTokenUtils;
+    private final RefreshTokenRepo refreshTokenRepo;
 
 /*this method has the signing path for the post method located in auth controller*/
     @Order(1)
@@ -98,7 +101,24 @@ public class SecurityConfig {
                 .build();
     }
 
-
+    @Order(4)
+    @Bean
+    public SecurityFilterChain refreshTokenSecurityFilterChain(HttpSecurity httpSecurity) throws Exception{
+        return httpSecurity
+                .securityMatcher(("/refresh-token/**"))
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
+                .addFilterBefore(new JwtRefreshTokenFilter(rsaKeyRecord,jwtTokenUtils,refreshTokenRepo), UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> {
+                    log.error("[SecurityConfig:refreshTokenSecurityFilterChain] Exception due to :{}",ex);
+                    ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
+                    ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
+                })
+                .httpBasic(withDefaults())
+                .build();
+    }
 
 
     /*Encrypt the password

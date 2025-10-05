@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -48,5 +49,6 @@ public class Person {
     @Column(nullable = false)
     @JsonProperty
     private String phone;
+
 
 }

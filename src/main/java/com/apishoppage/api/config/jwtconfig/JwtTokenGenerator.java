@@ -67,5 +67,20 @@ public class JwtTokenGenerator {
         return String.join(" ", permissions);
     }
 
+    public String generateRefreshToken(Authentication authentication) {
+
+        log.info("[JwtTokenGenerator:generateRefreshToken] Token Creation Started for:{}", authentication.getName());
+
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer("atquil")
+                .issuedAt(Instant.now())  //in the property below you can change how many time does the refresh token will last
+                .expiresAt(Instant.now().plus(1 , ChronoUnit.DAYS))
+                .subject(authentication.getName())
+                .claim("scope", "REFRESH_TOKEN")
+                .build();
+
+        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
+
 }
 
